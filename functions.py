@@ -1,6 +1,4 @@
-# FUNCTION 1 - Hankelization
-
-  #construct here the function
+# Hankelization
 def hankelize(F,L):
   '''constructs the L-Trajectory Matrix X given an input (F) and shift length (L)'''
   import numpy as np
@@ -16,6 +14,7 @@ def hankelize(F,L):
   return X.T
 
 def inverseHankelize(X):
+  '''Given a Hankel matrix inverse transforms it to return the input matrix'''
   import numpy as np
   [L,K] = np.shape(X)
   N = K+L -1
@@ -23,18 +22,50 @@ def inverseHankelize(X):
   X = np.array(X)
   X = X.T
   for i in range(K):
-    j = i+1
-    F[j-1:j+L-2+1] = X[i]
+      j = i+1
+      F[j-1:j+L-2+1] = X[i]
 
   return F
-  
-  # FUNCTIONS 2
+
+######################################################################################################
+######################################################################################################
 def prebuiltICA(X,num_comps):
     from sklearn.decomposition import FastICA # type: ignore
     ica = FastICA(n_components=num_comps)
     XICA = ica.fit_transform(X)
-    return XICA
+    return XICA.T
 
 def innerProduct(x,y):
     from numpy import dot, sum
     return sum(dot(y,x))
+
+######################################################################################################
+######################################################################################################
+
+def normalize(inp):
+    small = min(inp)
+    big = max(inp)
+    outp = (inp-small)/(big-small)
+    return outp
+
+def innerProducts(X,Y):
+        from numpy import dot, sum,array
+        outs = []
+        for y in Y:
+              outs.append(sum(dot(y,X)))
+        scores = normalize(outs)
+        scores = array([scores,scores])
+        return scores
+
+def expDot(X,components):
+    import numpy as np
+    return np.sum(np.abs(np.dot(components,X)),axis = 1)
+
+
+def norm2(X):
+    import numpy as np
+    tot = np.sum(X)
+    return X/tot
+
+def nonCluster(X):
+    return X
